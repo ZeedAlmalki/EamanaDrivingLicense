@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almalki Driving - نظام إدارة رخص القيادة</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+ <!-- الهيدر الثابت -->
+    <header>
+        <div class="nav-right">
+            <a onclick="showPage('home')">الرئيسية</a>
+            <a>من نحن</a>
+            <a>تواصل معنا</a>
+        </div>
+        <div class="logo-container">
+            <span>المنصة المرورية</span>
+            <span>Almalki Driving</span>
+        </div>
+        <div class="nav-left" id="navLeft">
+            <a onclick="showPage('register')">إنشاء حساب</a>
+            <a onclick="showPage('login')">تسجيل الدخول</a>
+        </div>
+    </header>
+
+    <!-- 1. الصفحة الرئيسية -->
+    <div id="home" class="page active">
+        <div class="hero-section">
+            <div class="hero-text">
+                <h1>ماذا نقدم؟</h1>
+                <p>نظام متكامل لإدارة خدمات رخص القيادة، يهدف إلى تسهيل إجراءات إصدار وتجديد الرخص ومتابعة الاختبارات والتحقق من حالة الطلبات بشكل إلكتروني سريع وآمن.</p>
+            </div>
+            <div style="font-size: 60px;">🚗</div>
+        </div>
+
+        <h2 class="section-title">خدماتنا</h2>
+        
+        <div class="services-grid">
+            <div class="service-card" onclick="showPage('query')">
+                <div class="service-icon">🔍</div>
+                <div class="service-info">
+                    <h3>الإستعلام عن رخص القيادة</h3>
+                    <p>الاستعلام بكل سهولة وبمدة زمنية قليلة</p>
+                </div>
+            </div>
+
+            <div class="service-card" onclick="showPage('new-license')">
+                <div class="service-icon">🪪</div>
+                <div class="service-info">
+                    <h3>طلب رخصة قيادة جديدة</h3>
+                    <p>تقديم طلب رخصة قيادة جديدة</p>
+                </div>
+            </div>
+
+            <div class="service-card" onclick="showPage('details')">
+                <div class="service-icon">📋</div>
+                <div class="service-info">
+                    <h3>تفاصيل الطلبات</h3>
+                    <p>استعراض تفاصيل وحالة الطلب المقدم</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- 2. صفحة إنشاء حساب جديد -->
+    <div id="register" class="page">
+        <button class="back-btn" onclick="showPage('home')">⬅</button>
+        <div class="form-container">
+            <h2 class="page-heading">إنشاء حساب جديد</h2>
+            <form id="registerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>الاسم الرباعي:</label>
+                        <input type="text" id="regFullName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف:</label>
+                        <input type="tel" id="regPhone" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الايميل:</label>
+                        <input type="email" id="regEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهوية:</label>
+                        <input type="text" id="regNationalNo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>تاريخ الميلاد:</label>
+                        <input type="date" id="regDob" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الجنس:</label>
+                        <select id="regGender" class="form-control" required>
+                            <option value="">الرجاء الاختيار</option>
+                            <option value="0">ذكر</option>
+                            <option value="1">أنثى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الجنسية (تُجلب من الـ API):</label>
+                        <select id="countrySelect" class="form-control" required>
+                            <option value="">جاري التحميل...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المدينة:</label>
+                        <select id="regCity" class="form-control" required>
+                            <option value="">الرجاء الاختيار</option>
+                            <option value="dammam">الدمام</option>
+                            <option value="khobar">الخبر</option>
+                            <option value="riyadh">الرياض</option>
+                            <option value="jeddah">جدة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة السر:</label>
+                        <input type="password" id="regPassword" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>تاكيد كلمة السر:</label>
+                        <input type="password" id="regConfirmPassword" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">تسجيل</button>
+                    <button type="reset" class="btn-cancel">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="login" class="page">
+        <button class="back-btn" onclick="showPage('home')">⬅</button>
+        <div class="form-container" style="max-width: 500px;">
+            <h2 class="page-heading">تسجيل الدخول</h2>
+            <form id="loginForm">
+                <div class="form-grid" style="grid-template-columns: 1fr;">
+                    <div class="form-group">
+                        <label>رقم الهوية (NationalID):</label>
+                        <input type="text" id="loginNationalID" class="form-control" placeholder="أدخل رقم الهوية" required>
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة السر:</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="أدخل كلمة السر" required>
+                    </div>
+                </div>
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button type="submit" class="btn-submit">تسجيل الدخول</button>
+                    <button type="button" class="btn-cancel" onclick="showPage('home')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. صفحة طلب رخصة قيادة جديدة -->
+  <div id="new-license" class="page">
+        <button class="back-btn" onclick="showPage('home')">⬅</button>
+        <div class="form-container" style="max-width: 650px;">
+            <h2 class="page-heading">طلب رخصة قيادة جديدة</h2>
+            <form id="newLicenseForm">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>اختر نوع الرخصة:</label>
+                        <select id="licenseClassSelect" class="form-control" required>
+                            <option value="">جاري التحميل...</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">إرسال الطلب</button>
+                    <button type="button" class="btn-cancel" onclick="showPage('home')">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+  <!-- 4. صفحة استعلام عن طلبات الرخص -->
+    <div id="query" class="page">
+        <button class="back-btn" onclick="showPage('home')">⬅</button>
+        <div class="query-container" style="max-width: 950px;">
+            <h2 class="page-heading">استعلام عن طلبات الرخص</h2>
+            <div class="search-box-container">
+                <input type="text" id="queryNationalNo" class="form-control" placeholder="الرجاء ادخال رقم هوية المستفيد">
+                <button type="button" class="btn-submit" style="padding: 0 20px;" onclick="searchLicenses()">🔍</button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>نوع الرخصة</th>
+                        <th>رقم الهوية</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="queryTableBody">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: gray;">أدخل رقم الهوية وابحث لعرض النتائج...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+ <!-- 5. صفحة تفاصيل الطلب -->
+    <div id="details" class="page">
+        <button class="back-btn" onclick="showPage('query')">⬅</button>
+        <div class="form-container" style="max-width: 700px;">
+            <h2 class="page-heading">تفاصيل الطلب</h2>
+            <div class="details-box">
+                <div class="detail-row">
+                    <span>رقم الطلب:</span>
+                    <span id="detailOrderID">-</span>
+                </div>
+                <div class="detail-row">
+                    <span>اسم المقدم:</span>
+                    <span id="detailFullName">-</span>
+                </div>
+                <div class="detail-row">
+                    <span>الحالة:</span>
+                    <span id="detailStatus" style="color: #27ae60; font-weight: bold;">-</span>
+                </div>
+            </div>
+            <div class="form-actions" style="margin-top: 30px;">
+                <button type="button" class="btn-cancel" onclick="showPage('query')">العودة لنتائج البحث</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- الفوتر الثابت -->
+    <footer>
+        <div class="footer-links">
+            <a>شروط الخدمة</a>
+            <a>الدعم الفني</a>
+            <a>سياسة الخصوصية</a>
+        </div>
+        <div class="social-icons">
+            <span>𝕏</span>
+            <span>▶</span>
+            <span>🟢</span>
+        </div>
+        <div>
+            <span>كل الحقوق محفوظة @Almalki_Driving</span>
+        </div>
+    </footer>
+
+    <!-- ربط ملف الـ JavaScript الخارجي -->
+    <script src="script.js"></script>
+</body>
+</html>

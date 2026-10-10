@@ -1,0 +1,25 @@
+# .NET Build Results
+[Bb]in/
+[Oo]bj/
+[Ll]ogs/
+[Uu]serLocked
+_ReSharper*/
+*.rsuser
+*.suo
+*.user
+*.userosscat
+*.cache
+
+# Visual Studio files
+.vs/
+*.njsproj
+*.sln.docstates
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
