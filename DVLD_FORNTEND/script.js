@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5281/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // دالة التنقل بين الصفحات مع التحقق من حالة تسجيل الدخول للخدمات
 function showPage(pageId) {
@@ -165,43 +165,197 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. معالجة إنشاء حساب جديد
-    const registerForm = document.getElementById('registerForm');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const personData = {
-                FullName: document.getElementById('regFullName').value,
-                PhoneNumber: document.getElementById('regPhone').value,
-                Email: document.getElementById('regEmail').value,
-                NationalID: document.getElementById('regNationalNo').value,
-                Gender: parseInt(document.getElementById('regGender').value),
-                CountryID: parseInt(document.getElementById('countrySelect').value),
-                City: document.getElementById('regCity').value,
-                Password: document.getElementById('regPassword').value
-            };
+// 2. معالجة إنشاء حساب جديد مع التحقق الشامل (Form Validation)
+const registerForm = document.getElementById('registerForm');
+if (registerForm) {
+    registerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        let isValid = true;
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/people`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(personData)
-                });
+        // 1. التحقق من الاسم الرباعي (regFullName)
+        const fullNameInput = document.getElementById('regFullName');
+        const fullNameVal = fullNameInput.value.trim();
+        const nameParts = fullNameVal.split(/\s+/);
+        const nameRegex = /^[\u0600-\u06FFa-zA-Z\s]+$/;
+        
+        if (!fullNameVal) {
+            setError(fullNameInput, 'هذا الحقل مطلوب.');
+            isValid = false;
+        } else if (nameParts.length < 4 || !nameRegex.test(fullNameVal)) {
+            setError(fullNameInput, 'يرجى إدخال اسم رباعي صحيح (أربعة أجزاء على الأقل بدون أرقام).');
+            isValid = false;
+        } else {
+            setSuccess(fullNameInput);
+        }
 
-                if (response.ok) {
-                    alert('تم إنشاء الحساب وحفظ البيانات بنجاح! يرجى تسجيل الدخول.');
-                    registerForm.reset();
-                    showPage('login');
-                } else {
-                    const errorText = await response.text();
-                    alert('فشل الحفظ من الخادم: ' + errorText);
-                }
-            } catch (error) {
-                console.error('خطأ في الاتصال:', error);
-                alert('حدث خطأ في الاتصال بالـ API.');
+        // 2. التحقق من رقم الهاتف (regPhone)
+        const phoneInput = document.getElementById('regPhone');
+        const phoneVal = phoneInput.value.trim();
+        const phoneRegex = /^(05[0-9]{8}|\+9665[0-9]{8})$/;
+
+        if (!phoneVal) {
+            setError(phoneInput, 'هذا الحقل مطلوب.');
+            isValid = false;
+        } else if (!phoneRegex.test(phoneVal)) {
+            setError(phoneInput, 'رقم الهاتف غير صحيح (يجب أن يبدأ بـ 05 ويتكون من 10 أرقام).');
+            isValid = false;
+        } else {
+            setSuccess(phoneInput);
+        }
+
+        // 3. التحقق من البريد الإلكتروني (regEmail)
+        const emailInput = document.getElementById('regEmail');
+        const emailVal = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailVal) {
+            setError(emailInput, 'هذا الحقل مطلوب.');
+            isValid = false;
+        } else if (!emailRegex.test(emailVal) || /\s/.test(emailVal)) {
+            setError(emailInput, 'البريد الإلكتروني غير صحيح.');
+            isValid = false;
+        } else {
+            setSuccess(emailInput);
+        }
+
+        // 4. التحقق من رقم الهوية (regNationalNo)
+        const nationalIDInput = document.getElementById('regNationalNo');
+        const nationalIDVal = nationalIDInput.value.trim();
+        const idRegex = /^[0-9]{10}$/;
+
+        if (!nationalIDVal) {
+            setError(nationalIDInput, 'هذا الحقل مطلوب.');
+            isValid = false;
+        } else if (!idRegex.test(nationalIDVal)) {
+            setError(nationalIDInput, 'رقم الهوية يجب أن يتكون من 10 أرقام.');
+            isValid = false;
+        } else {
+            setSuccess(nationalIDInput);
+        }
+
+        // 5. التحقق من الجنس (regGender) - تم إصلاح مشكلة قبول القيمة 0 (ذكر)
+        const genderInput = document.getElementById('regGender');
+        if (genderInput.value === '' || genderInput.value === null) {
+            setError(genderInput, 'هذا الحقل مطلوب.');
+            isValid = false;
+        } else {
+            setSuccess(genderInput);
+        }
+
+        // 6. التحقق من الجنسية/الدولة (countrySelect)
+        const countryInput = document.getElementById('countrySelect');
+        if (!countryInput.value || countryInput.value === '' || countryInput.value === '0') {
+            setError(countryInput, 'هذا الحقل مطلوب.');
+            isValid = false;
+        } else {
+            setSuccess(countryInput);
+        }
+
+        // 7. التحقق من المدينة (regCity)
+        const cityInput = document.getElementById('regCity');
+        const cityVal = cityInput.value.trim();
+        if (!cityVal) {
+            setError(cityInput, 'هذا الحقل مطلوب.');
+            isValid = false;
+        } else {
+            setSuccess(cityInput);
+        }
+
+        // 8. التحقق من كلمة المرور (regPassword)
+        const passwordInput = document.getElementById('regPassword');
+        const passwordVal = passwordInput.value;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,}$/;
+
+        if (!passwordVal) {
+            setError(passwordInput, 'هذا الحقل مطلوب.');
+            isValid = false;
+        } else if (!passwordRegex.test(passwordVal)) {
+            setError(passwordInput, 'كلمة المرور يجب ألا تقل عن 8 أحرف وتحتوي على حرف كبير وصغير ورقم.');
+            isValid = false;
+        } else {
+            setSuccess(passwordInput);
+        }
+
+        // 9. التحقق من تأكيد كلمة المرور (regConfirmPassword) - تمت إضافته للتأكد من التطابق
+        const confirmPasswordInput = document.getElementById('regConfirmPassword');
+        if (confirmPasswordInput) {
+            const confirmVal = confirmPasswordInput.value;
+            if (!confirmVal) {
+                setError(confirmPasswordInput, 'هذا الحقل مطلوب.');
+                isValid = false;
+            } else if (confirmVal !== passwordVal) {
+                setError(confirmPasswordInput, 'كلمتا المرور غير متطابقتين.');
+                isValid = false;
+            } else {
+                setSuccess(confirmPasswordInput);
             }
-        });
+        }
+
+        // إذا كان هناك أي خطأ، أوقف الإرسال نهائياً
+        if (!isValid) {
+            return;
+        }
+
+        // تعطيل زر الإرسال لمنع التكرار أثناء الاتصال
+        const submitBtn = registerForm.querySelector('button[type="submit"]') || registerForm.querySelector('input[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+
+        const personData = {
+            FullName: fullNameVal,
+            PhoneNumber: phoneVal,
+            Email: emailVal,
+            NationalID: nationalIDVal,
+            Gender: parseInt(genderInput.value),
+            CountryID: parseInt(countryInput.value),
+            City: cityVal,
+            Password: passwordVal
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/people`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(personData)
+            });
+
+            if (response.ok) {
+                alert('تم إنشاء الحساب وحفظ البيانات بنجاح! يرجى تسجيل الدخول.');
+                registerForm.reset();
+                showPage('login');
+            } else {
+                const errorText = await response.text();
+                alert('فشل الحفظ من الخادم: ' + errorText);
+            }
+        } catch (error) {
+            console.error('خطأ في الاتصال:', error);
+            alert('حدث خطأ في الاتصال بالـ API.');
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
+        }
+    });
+}
+
+// دوال مساعدة لإدارة الأخطاء والتنسيق المرئي
+function setError(inputElement, message) {
+    inputElement.classList.add('is-invalid');
+    inputElement.classList.remove('is-valid');
+    let errorSpan = inputElement.parentElement.querySelector('.error-message');
+    if (!errorSpan) {
+        errorSpan = document.createElement('span');
+        errorSpan.className = 'error-message';
+        inputElement.parentElement.appendChild(errorSpan);
     }
+    errorSpan.innerText = message;
+}
+
+function setSuccess(inputElement) {
+    inputElement.classList.remove('is-invalid');
+    let errorSpan = inputElement.parentElement.querySelector('.error-message');
+    if (errorSpan) {
+        errorSpan.remove();
+    }
+}
 
     // 3. معالجة طلب رخصة قيادة جديدة وربطها بالجدول OrderDetails (مرتب ومتكامل 100%)
     const newLicenseForm = document.getElementById('newLicenseForm');
@@ -282,7 +436,7 @@ async function searchLicenses() {
     tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center;">جاري البحث...</td></tr>`;
 
     try {
-        let response = await fetch(`http://localhost:5281/api/orders/national/${nationalID}`);
+        let response = await fetch(`http://localhost:5000/api/orders/national/${nationalID}`);
 
         if (!response.ok) {
             tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">لا توجد رخص أو طلبات مسجلة برقم الهوية هذا.</td></tr>`;
